@@ -2,15 +2,24 @@ module WebVTT
   class Cue
     attr_accessor :identifier, :start, :end, :style, :text
 
-    def initialize(cue = nil)
-      @content = cue
+    def initialize
       @style = {}
     end
 
-    def self.parse(cue)
-      cue = Cue.new(cue)
-      cue.parse
-      return cue
+    def self.parse(content)
+      cue = Cue.new
+      cue.parse(content)
+      cue
+    end
+
+    def self.build(identifier: nil, start_sec:, end_sec:, text:, style: {})
+      cue = Cue.new
+      cue.identifier = identifier
+      cue.start = Timestamp.new start_sec
+      cue.end = Timestamp.new end_sec
+      cue.text = text
+      cue.style = style
+      cue
     end
 
     def to_webvtt
@@ -44,13 +53,13 @@ module WebVTT
       @end.to_f - @start.to_f
     end
 
-    def offset_by( offset_secs )
+    def offset_by(offset_secs)
       @start += offset_secs
       @end   += offset_secs
     end
 
-    def parse
-      lines = @content.split("\n").map(&:strip)
+    def parse(content)
+      lines = content.split("\n").map(&:strip)
 
       # it's a note, ignore
       return if lines[0] =~ /NOTE/

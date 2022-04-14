@@ -26,14 +26,6 @@ class ParserTest < Minitest::Test
     assert_equal [], webvtt.cues
   end
 
-  def test_list_cues
-    webvtt = WebVTT.read('tests/subtitles/test.vtt')
-    assert_instance_of Array, webvtt.cues
-    assert !webvtt.cues.empty?, 'Cues should not be empty'
-    assert_instance_of WebVTT::Cue, webvtt.cues[0]
-    assert_equal 15, webvtt.cues.size
-  end
-
   def test_header
     webvtt = WebVTT.read('tests/subtitles/test.vtt')
     assert_equal "WEBVTT\nX-TIMESTAMP-MAP=MPEGTS:900000,LOCAL:00:00:00.000", webvtt.header
@@ -80,12 +72,6 @@ class ParserTest < Minitest::Test
     assert_equal 3, webvtt.cues.size
     # ignoring the first cue which is a NOTE
     assert_equal '1', webvtt.cues[0].identifier
-  end
-
-  def test_timestamp_in_sec
-    assert_equal 60.0, WebVTT::Cue.timestamp_in_sec('00:01:00.000')
-    assert_equal 126.23, WebVTT::Cue.timestamp_in_sec('00:02:06.230')
-    assert_equal 5159.892, WebVTT::Cue.timestamp_in_sec('01:25:59.892')
   end
 
   def test_total_length
@@ -187,18 +173,6 @@ The text should change'
     assert_equal '', webvtt.cues[1].text
   end
 
-  def test_cue_offset_by
-    cue = WebVTT::Cue.parse <<-CUE
-    00:00:01.000 --> 00:00:25.432
-    Test Cue
-    CUE
-    assert_equal 1.0, cue.start.to_f
-    assert_equal 25.432, cue.end.to_f
-    cue.offset_by( 12.0 )
-    assert_equal 13.0, cue.start.to_f
-    assert_equal 37.432, cue.end.to_f
-  end
-
   def test_timestamp_from_string
     ts_str = '00:05:31.522'
     ts = WebVTT::Timestamp.new( ts_str )
@@ -227,28 +201,8 @@ The text should change'
     assert_equal '03:39:34.008', ts3.to_s
   end
 
-  def test_build_cue
-    cue = WebVTT::Cue.new
-    cue.start = WebVTT::Timestamp.new 0
-    cue.end = WebVTT::Timestamp.new 12
-    cue.text = 'Built from scratch'
-    output = ''
-    output << "00:00:00.000 --> 00:00:12.000\n"
-    output << 'Built from scratch'
-    assert_equal output, cue.to_webvtt
-  end
-
   def test_invalid_cue
     webvtt = WebVTT.convert_from_srt('tests/subtitles/invalid_cue.srt')
     assert_equal 1, webvtt.cues.size
   end
-
-  def test_can_validate_webvtt_with_carriage_returns
-    webvtt = WebVTT::File.new('tests/subtitles/test_carriage_returns.vtt')
-    assert_instance_of Array, webvtt.cues
-    assert !webvtt.cues.empty?, 'Cues should not be empty'
-    assert_instance_of WebVTT::Cue, webvtt.cues[0]
-    assert_equal 15, webvtt.cues.size
-  end
-
 end

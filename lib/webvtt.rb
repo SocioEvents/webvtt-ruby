@@ -1,7 +1,7 @@
 # encoding: UTF-8
 
 if defined?(Encoding)
-  Encoding.default_internal = Encoding.default_external = "UTF-8"
+  Encoding.default_internal = Encoding.default_external = 'UTF-8'
 end
 
 module WebVTT
@@ -9,5 +9,9 @@ module WebVTT
   class InputError < RuntimeError; end
 end
 
-require "webvtt/parser"
-require "webvtt/segmenter"
+require 'webvtt/blob'
+require 'webvtt/file'
+require 'webvtt/timestamp'
+require 'webvtt/cue'
+require 'webvtt/parser'
+require 'webvtt/segmenter'

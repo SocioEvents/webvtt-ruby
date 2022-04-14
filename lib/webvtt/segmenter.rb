@@ -8,7 +8,7 @@ module WebVTT
     end
 
     if ! input.respond_to?(:to_webvtt)
-      raise InputError, "Input must be a WebVTT instance or a path"
+      raise InputError, 'Input must be a WebVTT instance or a path'
     end
 
     segmenter = Segmenter.new(input, options)
@@ -25,8 +25,8 @@ module WebVTT
       @webvtt = webvtt
       @options = options
       @options[:length] ||= 10
-      @options[:output] ||= "fileSequence-%05d.vtt"
-      @options[:playlist] ||= "prog_index.m3u8"
+      @options[:output] ||= 'fileSequence-%05d.vtt'
+      @options[:playlist] ||= 'prog_index.m3u8'
 
       # a dirty hack to check if output and playlist are ending with / (indicating a directory) and if so use the default filename and playlist name and create directory which is required.
 
@@ -109,9 +109,9 @@ module WebVTT
 #EXT-X-MEDIA-SEQUENCE:0
 #EXT-X-PLAYLIST-TYPE:VOD)]
       playlist.concat(lines)
-      playlist << "#EXT-X-ENDLIST"
+      playlist << '#EXT-X-ENDLIST'
 
-      ::File.open(@options[:playlist], "w") {|f| f.write(playlist.join("\n")) }
+      ::File.open(@options[:playlist], 'w') {|f| f.write(playlist.join("\n")) }
       return @options[:playlist]
     end
 
@@ -130,14 +130,14 @@ module WebVTT
         filename = sprintf(@options[:output], i)
         header = @webvtt.header
 
-        if !header.include?("X-TIMESTAMP-MAP")
+        if !header.include?('X-TIMESTAMP-MAP')
           # FIXME: the value should be configurable
           header << "\nX-TIMESTAMP-MAP=MPEGTS:900000,LOCAL:00:00:00.000"
         end
 
         content = [header, f.map{|c| c.to_webvtt }.join("\n\n")].join("\n\n")
 
-        ::File.open(filename, "w") {|f| f.write(content)}
+        ::File.open(filename, 'w') {|f| f.write(content)}
 
         filenames << filename
       end

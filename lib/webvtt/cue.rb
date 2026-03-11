@@ -25,7 +25,7 @@ module WebVTT
     end
 
     def to_webvtt
-      res = ''
+      res = String.new('')
       if @identifier
         res << "#{@identifier}\n"
       end
